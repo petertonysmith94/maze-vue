@@ -1,28 +1,43 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <Grid
+      :grid="maze.grid"
+    />
   </div>
 </template>
 
-<script>
-import HelloWorld from "./components/HelloWorld.vue";
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+import Grid from "./components/Grid.vue";
+/* eslint-disable */
+import Client, { GeneratorAlgorithm, Maze, Point, SolverAlgorithms } from 'maze';
 
-export default {
-  name: "App",
+@Component({
   components: {
-    HelloWorld,
+    Grid,
   },
-};
-</script>
+})
+export default class App extends Vue {
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  private client = new Client();
+
+  private get maze(): Maze {
+    const generated = this.client.generate(10, 10, GeneratorAlgorithm.RECURSIVE_DIVISION);
+
+    const solution = this.client.solve(generated, new Point(0, 0), new Point(9, 9), SolverAlgorithms.A_STAR);
+
+    console.log(solution);
+
+    return solution?.solution ?? generated;
+  }
+
+  computed() {
+    console.log('Computed');
+
+    return {
+
+    };
+  }
+
 }
-</style>
+</script>
